@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaCheck, FaTimes, FaStar, FaTachometerAlt, FaCogs, FaUsers, FaCalendar, FaDollarSign, FaGasPump } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaStar, FaTachometerAlt, FaCogs, FaUsers, FaCalendar, FaDollarSign, FaGasPump, FaCar } from 'react-icons/fa';
 
 const ComparisonTable = ({ cars, comparisonData, onRemove, onClear, onBack }) => {
     const getSpecIcon = (specName) => {
