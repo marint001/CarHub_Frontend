@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import './styles/global.css';
+import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import CarCatalog from './components/CarCatalog';
+import Features from './components/Features';
+import Contact from './components/Contact';
+import Footer from './components/Footer';
+import { carsData } from './data/carsData';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <div className="App">
+        <Navbar />
+        <Hero />
+        <CarCatalog cars={carsData} />
+        <Features />
+        <Contact />
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }
 
