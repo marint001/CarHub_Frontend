@@ -13,13 +13,6 @@ const Hero = () => {
     { value: "24/7", label: "Expert Support", icon: "🎧" }
   ];
 
-  const smoothScroll = (targetId) => {
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
     <section id="home" className="hero">
       <div className="hero-overlay"></div>
@@ -29,12 +22,8 @@ const Hero = () => {
           <h1>Experience <span>Automotive</span> Excellence</h1>
           <p>Discover our collection of world-class luxury vehicles. Performance, style, and innovation combined to create the ultimate driving experience.</p>
           <div className="hero-buttons">
-            <button className="btn-primary" onClick={() => smoothScroll('catalog')}>
-              Explore Collection →
-            </button>
-            <button className="btn-secondary" onClick={() => smoothScroll('contact')}>
-              Buy Your Dream Car
-            </button>
+            <button className="btn-primary">Explore Collection →</button>
+            <button className="btn-secondary">Buy Your Dream Car</button>
           </div>
         </div>
         

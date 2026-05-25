@@ -16,9 +16,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
-    const storedUser = localStorage.getItem('carShowroomUser');
-    const token = localStorage.getItem('carShowroomToken');
+    const storedUser = localStorage.getItem('carHubUser');
+    const token = localStorage.getItem('carHubToken');
     
     if (storedUser && token) {
       setUser(JSON.parse(storedUser));
@@ -29,10 +28,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = (email, password) => {
     return new Promise((resolve, reject) => {
-      // Simulate API call
       setTimeout(() => {
-        // Get users from localStorage
-        const users = JSON.parse(localStorage.getItem('carShowroomUsers') || '[]');
+        const users = JSON.parse(localStorage.getItem('carHubUsers') || '[]');
         const foundUser = users.find(u => u.email === email && u.password === password);
         
         if (foundUser) {
@@ -41,12 +38,12 @@ export const AuthProvider = ({ children }) => {
             name: foundUser.name,
             email: foundUser.email,
             phone: foundUser.phone,
-            avatar: foundUser.avatar || `https://ui-avatars.com/api/?background=e63946&color=fff&name=${encodeURIComponent(foundUser.name)}`
+            avatar: `https://ui-avatars.com/api/?background=e63946&color=fff&name=${encodeURIComponent(foundUser.name)}`
           };
           const token = 'token_' + Date.now() + '_' + foundUser.id;
           
-          localStorage.setItem('carShowroomUser', JSON.stringify(userData));
-          localStorage.setItem('carShowroomToken', token);
+          localStorage.setItem('carHubUser', JSON.stringify(userData));
+          localStorage.setItem('carHubToken', token);
           setUser(userData);
           setIsAuthenticated(true);
           resolve(userData);
@@ -60,9 +57,8 @@ export const AuthProvider = ({ children }) => {
   const register = (name, email, password, phone) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const users = JSON.parse(localStorage.getItem('carShowroomUsers') || '[]');
+        const users = JSON.parse(localStorage.getItem('carHubUsers') || '[]');
         
-        // Check if user already exists
         if (users.find(u => u.email === email)) {
           reject(new Error('User already exists with this email'));
           return;
@@ -79,9 +75,8 @@ export const AuthProvider = ({ children }) => {
         };
         
         users.push(newUser);
-        localStorage.setItem('carShowroomUsers', JSON.stringify(users));
+        localStorage.setItem('carHubUsers', JSON.stringify(users));
         
-        // Auto login after registration
         const userData = {
           id: newUser.id,
           name: newUser.name,
@@ -91,8 +86,8 @@ export const AuthProvider = ({ children }) => {
         };
         const token = 'token_' + Date.now() + '_' + newUser.id;
         
-        localStorage.setItem('carShowroomUser', JSON.stringify(userData));
-        localStorage.setItem('carShowroomToken', token);
+        localStorage.setItem('carHubUser', JSON.stringify(userData));
+        localStorage.setItem('carHubToken', token);
         setUser(userData);
         setIsAuthenticated(true);
         resolve(userData);
@@ -101,26 +96,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('carShowroomUser');
-    localStorage.removeItem('carShowroomToken');
+    localStorage.removeItem('carHubUser');
+    localStorage.removeItem('carHubToken');
     setUser(null);
     setIsAuthenticated(false);
   };
 
-  const value = {
-    user,
-    isAuthenticated,
-    loading,
-    login,
-    register,
-    logout
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export default AuthContext;
