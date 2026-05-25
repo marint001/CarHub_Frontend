@@ -4,27 +4,18 @@ const CarCard = ({ car, onViewDetails }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleCardClick = () => {
-    if (onViewDetails) {
-      onViewDetails(car);
-    }
-  };
-
-  const handleLikeClick = (e) => {
-    e.stopPropagation();
-    setIsLiked(!isLiked);
-  };
-
   return (
     <div 
       className={`car-card ${isHovered ? 'hovered' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={handleCardClick}
     >
-      <div className="car-image">
+      <div className="car-image" onClick={() => onViewDetails && onViewDetails(car)}>
         <img src={car.image} alt={car.name} />
-        <button className="like-btn" onClick={handleLikeClick}>
+        <button className="like-btn" onClick={(e) => {
+          e.stopPropagation();
+          setIsLiked(!isLiked);
+        }}>
           {isLiked ? '❤️' : '🤍'}
         </button>
         {car.featured && <span className="featured-badge">🔥 Featured</span>}
@@ -39,30 +30,19 @@ const CarCard = ({ car, onViewDetails }) => {
         <h3 className="car-name">{car.name}</h3>
         
         <div className="car-specs-grid">
-          <div className="spec-item">
-            <span>⚡ {car.horsepower}</span>
-          </div>
-          <div className="spec-item">
-            <span>🏎️ {car.acceleration}</span>
-          </div>
-          {car.range && (
-            <div className="spec-item">
-              <span>🔋 {car.range}</span>
-            </div>
-          )}
+          <div className="spec-item">⚡ {car.horsepower}</div>
+          <div className="spec-item">🏎️ {car.acceleration}</div>
+          {car.range && <div className="spec-item">🔋 {car.range}</div>}
         </div>
         
-        <p className="car-description">{car.description}</p>
+        <p className="car-description">{car.description.substring(0, 80)}...</p>
         
         <div className="car-footer">
           <div className="car-price">
             <span className="price-amount">{car.price}</span>
             <span className="price-period">/ starting MSRP</span>
           </div>
-          <button className="buy-btn" onClick={(e) => {
-            e.stopPropagation();
-            if (onViewDetails) onViewDetails(car);
-          }}>
+          <button className="buy-btn" onClick={() => onViewDetails && onViewDetails(car)}>
             Buy Now →
           </button>
         </div>

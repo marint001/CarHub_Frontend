@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import UserMenu from './UserMenu';
 import AuthModal from './AuthModal';
 
-const Navbar = () => {
+const Navbar = ({ onNavigate, currentPage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -17,40 +17,33 @@ const Navbar = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen);
   
-  const smoothScroll = (e, targetId) => {
-    e.preventDefault();
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setIsOpen(false);
+  const handleNavigation = (page) => {
+    if (onNavigate) {
+      onNavigate(page);
     }
-  };
-
-  const handleBuyNow = (e) => {
-    e.preventDefault();
-    const catalogElement = document.getElementById('catalog');
-    if (catalogElement) {
-      catalogElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setIsOpen(false);
-    }
+    setIsOpen(false);
   };
 
   return (
     <>
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="nav-container">
-          <div className="logo" onClick={(e) => smoothScroll(e, 'home')}>
+          <div className="logo" onClick={() => handleNavigation('home')}>
             <span className="logo-icon">🚗</span>
-            <span>CAR HUB</span>
+            <span className="logo-text">
+              <span className="logo-car">CAR</span>
+              <span className="logo-hub">HUB</span>
+            </span>
           </div>
           
           <div className={`nav-links ${isOpen ? 'active' : ''}`}>
-            <a href="#home" onClick={(e) => smoothScroll(e, 'home')}>Home</a>
-            <a href="#catalog" onClick={(e) => smoothScroll(e, 'catalog')}>Vehicles</a>
-            <a href="#features" onClick={(e) => smoothScroll(e, 'features')}>Features</a>
-            <a href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>Contact</a>
+            <a href="home" onClick={() => handleNavigation('home')}>Home</a>
+            <a href="vehicles" onClick={() => handleNavigation('vehicles')}>Vehicles</a>
+            <a href="#" onClick={() => handleNavigation('carpark')}>Car Park</a>
+            <a href="#" onClick={() => handleNavigation('features')}>Features</a>
+            <a href="#" onClick={() => handleNavigation('contact')}>Contact</a>
             <UserMenu onOpenAuth={() => setShowAuthModal(true)} />
-            <button className="nav-cta" onClick={handleBuyNow}>
+            <button className="nav-cta" onClick={() => handleNavigation('vehicles')}>
               🛒 Buy Now
             </button>
           </div>
