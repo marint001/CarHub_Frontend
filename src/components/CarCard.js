@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
+import { useCart } from '../context/CartContext';
 
 const CarCard = ({ car, onViewDetails }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    addToCart(car);
+  };
 
   return (
     <div 
@@ -42,8 +49,8 @@ const CarCard = ({ car, onViewDetails }) => {
             <span className="price-amount">{car.price}</span>
             <span className="price-period">/ starting MSRP</span>
           </div>
-          <button className="buy-btn" onClick={() => onViewDetails && onViewDetails(car)}>
-            Buy Now →
+          <button className="add-to-cart-btn" onClick={handleAddToCart}>
+            🛒 Add to Cart
           </button>
         </div>
       </div>

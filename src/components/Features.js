@@ -3,87 +3,52 @@ import { motion } from 'framer-motion';
 
 const Features = () => {
   const features = [
-    { 
-      icon: "🛡️", 
-      title: "5-Year Warranty", 
-      desc: "Comprehensive coverage on all new vehicles",
-      color: "#FFD700"
-    },
-    { 
-      icon: "🎧", 
-      title: "24/7 Concierge", 
-      desc: "Round-the-clock personal assistance",
-      color: "#FFD700"
-    },
-    { 
-      icon: "🚗", 
-      title: "Free Test Drives", 
-      desc: "Experience any vehicle before purchase",
-      color: "#FFD700"
-    },
-    { 
-      icon: "🔧", 
-      title: "Maintenance Plan", 
-      desc: "3 years complimentary service",
-      color: "#FFD700"
-    },
-    { 
-      icon: "⏰", 
-      title: "Express Delivery", 
-      desc: "Get your car within 7 days",
-      color: "#FFD700"
-    },
-    { 
-      icon: "🏆", 
-      title: "Certified Pre-owned", 
-      desc: "Rigorously inspected vehicles",
-      color: "#FFD700"
-    },
-    { 
-      icon: "💳", 
-      title: "Flexible Financing", 
-      desc: "Customized payment solutions",
-      color: "#FFD700"
-    },
-    { 
-      icon: "🛣️", 
-      title: "Roadside Assistance", 
-      desc: "24/7 emergency support",
-      color: "#FFD700"
-    }
+    { icon: "🛡️", title: "5-Year Warranty", desc: "Comprehensive coverage on all new vehicles" },
+    { icon: "🎧", title: "24/7 Concierge", desc: "Round-the-clock personal assistance" },
+    { icon: "🚗", title: "Free Test Drives", desc: "Experience any vehicle before purchase" },
+    { icon: "🔧", title: "Maintenance Plan", desc: "3 years complimentary service" },
+    { icon: "⏰", title: "Express Delivery", desc: "Get your car within 7 days" },
+    { icon: "🏆", title: "Certified Pre-owned", desc: "Rigorously inspected vehicles" },
+    { icon: "💳", title: "Flexible Financing", desc: "Customized payment solutions" },
+    { icon: "🛣️", title: "Roadside Assistance", desc: "24/7 emergency support" }
+  ];
+
+  const benefits = [
+    { icon: "✅", title: "No Hidden Fees", desc: "Transparent pricing" },
+    { icon: "📞", title: "Expert Support", desc: "Knowledgeable staff" },
+    { icon: "📋", title: "Easy Paperwork", desc: "Quick documentation" },
+    { icon: "🚚", title: "Home Delivery", desc: "Nationwide shipping" }
   ];
 
   return (
-    <section className="features-section-enhanced">
+    <div className="features-page">
       <div className="features-container">
+        {/* Header */}
         <div className="features-header">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
           >
             <span className="features-badge">Why Choose Us</span>
-            <h2>Premium <span>Services</span></h2>
-            <p>Experience the difference with our world-class automotive services</p>
+            <h1>Premium <span>Services</span></h1>
+            <p>Experience the difference with our world-class automotive services designed for your convenience and peace of mind.</p>
           </motion.div>
         </div>
 
-        <div className="features-grid-enhanced">
+        {/* Features Grid */}
+        <div className="features-grid-page">
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="feature-card-enhanced"
+              className="feature-card-page"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05, duration: 0.5 }}
               viewport={{ once: true }}
-              whileHover={{ y: -10 }}
             >
               <div className="feature-icon-wrapper">
-                <div className="feature-icon-circle">
-                  <span className="feature-icon">{feature.icon}</span>
-                </div>
+                <div className="feature-icon-page">{feature.icon}</div>
               </div>
               <h3>{feature.title}</h3>
               <p>{feature.desc}</p>
@@ -94,34 +59,79 @@ const Features = () => {
 
         {/* Stats Section */}
         <motion.div 
-          className="features-stats"
+          className="features-stats-page"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="stat-item">
-            <div className="stat-number">15,000+</div>
-            <div className="stat-label">Happy Customers</div>
+          <div className="feature-stat-page">
+            <div className="feature-stat-number">15,000+</div>
+            <div className="feature-stat-label">Happy Customers</div>
           </div>
           <div className="stat-divider"></div>
-          <div className="stat-item">
-            <div className="stat-number">98%</div>
-            <div className="stat-label">Satisfaction Rate</div>
+          <div className="feature-stat-page">
+            <div className="feature-stat-number">98%</div>
+            <div className="feature-stat-label">Satisfaction Rate</div>
           </div>
           <div className="stat-divider"></div>
-          <div className="stat-item">
-            <div className="stat-number">24/7</div>
-            <div className="stat-label">Support Available</div>
+          <div className="feature-stat-page">
+            <div className="feature-stat-number">24/7</div>
+            <div className="feature-stat-label">Support Available</div>
           </div>
           <div className="stat-divider"></div>
-          <div className="stat-item">
-            <div className="stat-number">50+</div>
-            <div className="stat-label">Award Winning</div>
+          <div className="feature-stat-page">
+            <div className="feature-stat-number">50+</div>
+            <div className="feature-stat-label">Award Winning</div>
           </div>
         </motion.div>
+
+        {/* Benefits Section */}
+        <motion.div 
+          className="features-benefits"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <div className="benefits-header">
+            <h2>Additional Benefits</h2>
+            <p>Enjoy extra perks when you shop with us</p>
+          </div>
+          <div className="benefits-grid">
+            {benefits.map((benefit, index) => (
+              <motion.div
+                key={index}
+                className="benefit-item"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="benefit-icon">{benefit.icon}</div>
+                <div className="benefit-text">
+                  <h4>{benefit.title}</h4>
+                  <p>{benefit.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* CTA Section */}
+        <motion.div 
+          className="features-cta"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <h2>Ready to Experience Our Services?</h2>
+          <p>Contact us today to learn more about our premium offerings</p>
+          <button onClick={() => window.location.href = '#contact'}>Contact Us Now →</button>
+        </motion.div>
       </div>
-    </section>
+    </div>
   );
 };
 
