@@ -6,6 +6,7 @@ const CarCatalog = ({ cars, onViewDetails }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
+  const [visibleCount, setVisibleCount] = useState(4); // Show 4 cars initially
 
   const categories = ['all', ...new Set(cars.map(car => car.category))];
 
@@ -18,6 +19,20 @@ const CarCatalog = ({ cars, onViewDetails }) => {
 
   const featuredCars = filteredCars.filter(car => car.featured);
   const regularCars = filteredCars.filter(car => !car.featured);
+  
+  // Show only first 'visibleCount' regular cars
+  const displayedRegularCars = regularCars.slice(0, visibleCount);
+  const hasMoreCars = visibleCount < regularCars.length;
+
+  const loadMoreCars = () => {
+    setVisibleCount(prevCount => prevCount + 4);
+  };
+
+  const resetFilters = () => {
+    setFilter('all');
+    setSearchTerm('');
+    setVisibleCount(4);
+  };
 
   return (
     <section className="collection-section">
@@ -44,7 +59,10 @@ const CarCatalog = ({ cars, onViewDetails }) => {
               type="text" 
               placeholder="Search by brand or model..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setVisibleCount(4);
+              }}
             />
           </div>
           
@@ -77,7 +95,10 @@ const CarCatalog = ({ cars, onViewDetails }) => {
                 <button 
                   key={cat}
                   className={`filter-chip ${filter === cat ? 'active' : ''}`}
-                  onClick={() => setFilter(cat)}
+                  onClick={() => {
+                    setFilter(cat);
+                    setVisibleCount(4);
+                  }}
                 >
                   {cat === 'all' ? 'All Vehicles' : cat}
                   {filter === cat && <span className="chip-check">✓</span>}
@@ -171,68 +192,116 @@ const CarCatalog = ({ cars, onViewDetails }) => {
           </div>
         )}
 
-        {/* Regular Cars Grid */}
+        {/* Regular Cars Grid with See More */}
         {viewMode === 'grid' ? (
-          <div className="collection-grid">
-            {regularCars.map((car, index) => (
-              <motion.div
-                key={car.id}
-                className="collection-card"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -8 }}
-                onClick={() => onViewDetails(car)}
+          <>
+            <div className="collection-grid">
+              {displayedRegularCars.map((car, index) => (
+                <motion.div
+                  key={car.id}
+                  className="collection-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -8 }}
+                  onClick={() => onViewDetails(car)}
+                >
+                  <div className="card-image">
+                    <img src={car.image} alt={car.name} />
+                    <div className="card-overlay">
+                      <button className="quick-view">Quick View</button>
+                    </div>
+                  </div>
+                  <div className="card-content">
+                    <div className="card-header">
+                      <span className="card-brand">{car.brand}</span>
+                      <span className="card-year">{car.year}</span>
+                    </div>
+                    <h3 className="card-title">{car.name}</h3>
+                    <div className="card-specs">
+                      <span>⚡ {car.horsepower}</span>
+                      <span>🏎️ {car.acceleration}</span>
+                    </div>
+                    <div className="card-footer">
+                      <div className="card-price">{car.price}</div>
+                      <button className="card-btn">View Details →</button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* See More Button */}
+            {hasMoreCars && regularCars.length > 4 && (
+              <motion.div 
+                className="see-more-container"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
               >
-                <div className="card-image">
-                  <img src={car.image} alt={car.name} />
-                  <div className="card-overlay">
-                    <button className="quick-view">Quick View</button>
-                  </div>
-                </div>
-                <div className="card-content">
-                  <div className="card-header">
-                    <span className="card-brand">{car.brand}</span>
-                    <span className="card-year">{car.year}</span>
-                  </div>
-                  <h3 className="card-title">{car.name}</h3>
-                  <div className="card-specs">
-                    <span>⚡ {car.horsepower}</span>
-                    <span>🏎️ {car.acceleration}</span>
-                  </div>
-                  <div className="card-footer">
-                    <div className="card-price">{car.price}</div>
-                    <button className="card-btn">View Details →</button>
-                  </div>
-                </div>
+                <button className="see-more-btn" onClick={loadMoreCars}>
+                  <span>See More Vehicles</span>
+                  <span className="btn-icon">↓</span>
+                </button>
+                <p className="see-more-info">
+                  Showing {visibleCount} of {regularCars.length} vehicles
+                </p>
               </motion.div>
-            ))}
-          </div>
+            )}
+          </>
         ) : (
-          <div className="collection-list">
-            {regularCars.map((car) => (
-              <motion.div
-                key={car.id}
-                className="collection-list-item"
-                whileHover={{ x: 10 }}
-                onClick={() => onViewDetails(car)}
-              >
-                <img src={car.image} alt={car.name} />
-                <div className="list-content">
-                  <h4>{car.name}</h4>
-                  <p>{car.brand} • {car.year}</p>
-                  <div className="list-specs">
-                    <span>{car.horsepower}</span>
-                    <span>{car.acceleration}</span>
+          <>
+            <div className="collection-list">
+              {displayedRegularCars.map((car) => (
+                <motion.div
+                  key={car.id}
+                  className="collection-list-item"
+                  whileHover={{ x: 10 }}
+                  onClick={() => onViewDetails(car)}
+                >
+                  <img src={car.image} alt={car.name} />
+                  <div className="list-content">
+                    <h4>{car.name}</h4>
+                    <p>{car.brand} • {car.year}</p>
+                    <div className="list-specs">
+                      <span>{car.horsepower}</span>
+                      <span>{car.acceleration}</span>
+                    </div>
                   </div>
-                </div>
-                <div className="list-price">
-                  <span>{car.price}</span>
-                  <button>View</button>
-                </div>
+                  <div className="list-price">
+                    <span>{car.price}</span>
+                    <button>View</button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* See More Button for List View */}
+            {hasMoreCars && regularCars.length > 4 && (
+              <motion.div 
+                className="see-more-container"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <button className="see-more-btn" onClick={loadMoreCars}>
+                  <span>See More Vehicles</span>
+                  <span className="btn-icon">↓</span>
+                </button>
+                <p className="see-more-info">
+                  Showing {visibleCount} of {regularCars.length} vehicles
+                </p>
               </motion.div>
-            ))}
+            )}
+          </>
+        )}
+
+        {/* Reset Button when filters are active */}
+        {(filter !== 'all' || searchTerm) && (
+          <div className="reset-filters">
+            <button onClick={resetFilters}>
+              Reset All Filters
+            </button>
           </div>
         )}
 
@@ -241,7 +310,7 @@ const CarCatalog = ({ cars, onViewDetails }) => {
             <span>🔍</span>
             <h3>No vehicles found</h3>
             <p>Try adjusting your search or filter criteria</p>
-            <button onClick={() => { setSearchTerm(''); setFilter('all'); }}>Reset Filters</button>
+            <button onClick={resetFilters}>Reset Filters</button>
           </div>
         )}
       </div>
