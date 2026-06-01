@@ -28,32 +28,37 @@ export const CartProvider = ({ children }) => {
 
   const updateCartSummary = (items) => {
     const count = items.reduce((sum, item) => sum + item.quantity, 0);
-    const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = items.reduce((sum, item) => {
+      let itemPrice = item.price;
+      // Handle both string price and numeric finalPrice
+      if (item.isCustomized && item.finalPrice) {
+        itemPrice = item.finalPrice;
+      } else if (typeof item.price === 'string') {
+        itemPrice = parseFloat(item.price.replace(/[^0-9.-]+/g, ''));
+      }
+      return sum + (itemPrice * item.quantity);
+    }, 0);
     setCartCount(count);
     setCartTotal(total);
   };
 
-  const addToCart = (car, customization = null) => {
+  const addToCart = (item) => {
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === car.id);
-      
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.id === car.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prevItems, {
-          id: car.id,
-          name: car.name,
-          brand: car.brand,
-          price: car.price,
-          image: car.image,
-          quantity: 1,
-          customization: customization
-        }];
+      // For customized cars, always add as new item (never merge)
+      if (item.isCustomized) {
+        return [...prevItems, { ...item, quantity: 1 }];
       }
+      
+      // For non-customized cars, check if exists (only merge non-customized)
+      const existingItem = prevItems.find(i => i.id === item.id && !i.isCustomized);
+      if (existingItem) {
+        return prevItems.map(i =>
+          i.id === item.id && !i.isCustomized
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
+        );
+      }
+      return [...prevItems, { ...item, quantity: 1 }];
     });
     
     // Show cart sidebar
@@ -105,3 +110,5 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
+export default CartContext;

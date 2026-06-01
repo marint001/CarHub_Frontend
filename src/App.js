@@ -15,6 +15,7 @@ import NewsletterSignup from './components/NewsletterSignup';
 import NewCars from './components/NewCars';
 import UsedCars from './components/UsedCars';
 import CarDetailPage from './components/CarDetailPage';
+import CustomizePage from './components/CustomizePage';
 import Features from './components/Features';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -32,6 +33,7 @@ function App() {
   const [carSource, setCarSource] = useState(null);
 
   const handleNavigate = (page, car = null, source = null) => {
+    console.log('Navigating to:', page, car?.name, source);
     if (car) {
       setSelectedCar(car);
       setCarSource(source);
@@ -44,7 +46,22 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // This function handles customize from ANY page (CarDetail, NewCars, UsedCars, CarCatalog)
+  const handleCustomize = (car) => {
+    console.log('handleCustomize called with car:', car?.name);
+    setSelectedCar(car);
+    setCurrentPage('customize');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToHome = () => {
+    console.log('Going back to home page');
+    setCurrentPage('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleBackToPrevious = () => {
+    console.log('handleBackToPrevious called, carSource:', carSource);
     if (carSource === 'new') {
       setCurrentPage('newcars');
     } else if (carSource === 'used') {
@@ -55,25 +72,52 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleAddToCart = (customizedCar) => {
+    console.log('Customized car added to cart:', customizedCar);
+  };
+
   const renderPage = () => {
+    console.log('Current page:', currentPage);
     switch(currentPage) {
       case 'newcars':
-        return <NewCars cars={carsData.filter(c => c.year >= 2020)} onViewDetails={(car) => handleNavigate('detail', car, 'new')} />;
+        return <NewCars 
+          cars={carsData.filter(c => c.year >= 2020)} 
+          onViewDetails={(car) => handleNavigate('detail', car, 'new')}
+          onCustomize={handleCustomize}  // ← ADD THIS
+        />;
       case 'usedcars':
-        return <UsedCars cars={carsData.filter(c => c.year < 2020)} onViewDetails={(car) => handleNavigate('detail', car, 'used')} />;
+        return <UsedCars 
+          cars={carsData.filter(c => c.year < 2020)} 
+          onViewDetails={(car) => handleNavigate('detail', car, 'used')}
+          onCustomize={handleCustomize}  // ← ADD THIS
+        />;
       case 'features':
         return <Features />;
       case 'contact':
         return <Contact />;
       case 'detail':
-        return <CarDetailPage car={selectedCar} onBack={handleBackToPrevious} />;
+        return <CarDetailPage 
+          car={selectedCar} 
+          onBack={handleBackToPrevious} 
+          onCustomize={() => handleCustomize(selectedCar)} 
+        />;
+      case 'customize':
+        return <CustomizePage 
+          car={selectedCar} 
+          onBack={handleBackToHome}
+          onAddToCart={handleAddToCart} 
+        />;
       case 'home':
       default:
         return (
           <>
             <HeroSlider />
             <SpecialOffers />
-            <CarCatalog cars={carsData} onViewDetails={(car) => handleNavigate('detail', car, 'home')} />
+            <CarCatalog 
+              cars={carsData} 
+              onViewDetails={(car) => handleNavigate('detail', car, 'home')}
+              onCustomize={handleCustomize}  // ← ADD THIS
+            />
             <WhyChooseUs />
             <Testimonials />
             <BrandShowcase />

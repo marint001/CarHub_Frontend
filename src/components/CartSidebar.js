@@ -26,21 +26,19 @@ const CartSidebar = () => {
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: 50 },
-    visible: (i) => ({ 
-      opacity: 1, 
-      x: 0,
-      transition: { delay: i * 0.05 }
-    }),
-    exit: { opacity: 0, x: 50 }
+  // Calculate item total price
+  const getItemTotal = (item) => {
+    if (item.isCustomized && item.finalPrice) {
+      return item.finalPrice * item.quantity;
+    }
+    const price = parseFloat(item.price?.replace(/[^0-9.-]+/g, '')) || 0;
+    return price * item.quantity;
   };
 
   return (
     <AnimatePresence>
       {isCartOpen && (
         <>
-          {/* Backdrop */}
           <motion.div 
             className="cart-backdrop"
             initial={{ opacity: 0 }}
@@ -49,7 +47,6 @@ const CartSidebar = () => {
             onClick={toggleCart}
           />
           
-          {/* Sidebar */}
           <motion.div 
             className="cart-sidebar"
             variants={sidebarVariants}
@@ -58,59 +55,61 @@ const CartSidebar = () => {
             exit="exit"
           >
             <div className="cart-header">
-              <h2>
-                🛒 Your Cart 
-                <span className="cart-count-badge">{cartCount}</span>
-              </h2>
+              <h2>🛒 Your Cart ({cartCount})</h2>
               <button className="cart-close" onClick={toggleCart}>×</button>
             </div>
 
             <div className="cart-items">
               {cartItems.length === 0 ? (
                 <div className="cart-empty">
-                  <span className="empty-emoji">🛒</span>
+                  <span>🛒</span>
                   <h3>Your cart is empty</h3>
                   <p>Add some vehicles to get started</p>
                 </div>
               ) : (
-                <AnimatePresence>
-                  {cartItems.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      className="cart-item"
-                      variants={itemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      custom={index}
-                    >
-                      <img src={item.image} alt={item.name} />
-                      <div className="cart-item-details">
-                        <h4>{item.name}</h4>
-                        <p className="cart-item-brand">{item.brand}</p>
-                        <p className="cart-item-price">{item.price}</p>
-                        {item.customization && (
-                          <div className="cart-item-custom">
-                            <span>🎨 Customized</span>
+                cartItems.map((item) => (
+                  <div key={item.id} className="cart-item">
+                    <img src={item.image} alt={item.name} />
+                    <div className="cart-item-details">
+                      <h4>{item.name}</h4>
+                      <p className="cart-item-brand">{item.brand}</p>
+                      
+                      {/* Show customization details if item is customized */}
+                      {item.isCustomized && item.customization && (
+                        <div className="cart-item-customization">
+                          <div className="custom-badge">✨ Customized</div>
+                          {item.customization.details && (
+                            <div className="custom-details">
+                              <div className="custom-detail">🎨 {item.customization.details.exterior}</div>
+                              <div className="custom-detail">🛋️ {item.customization.details.interior}</div>
+                              <div className="custom-detail">🛞 {item.customization.details.wheels}</div>
+                              {item.customization.details.package !== 'None' && (
+                                <div className="custom-detail">📦 {item.customization.details.package}</div>
+                              )}
+                              {item.customization.details.accessories !== 'None' && (
+                                <div className="custom-detail">🎒 {item.customization.details.accessories}</div>
+                              )}
+                            </div>
+                          )}
+                          <div className="custom-price-breakdown">
+                            <span>Base: {item.basePrice}</span>
+                            <span>Customization: +${item.customization.totalCustomizationPrice?.toLocaleString()}</span>
                           </div>
-                        )}
-                      </div>
-                      <div className="cart-item-actions">
-                        <div className="quantity-control">
-                          <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
-                          <span>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
                         </div>
-                        <button 
-                          className="remove-btn"
-                          onClick={() => removeFromCart(item.id)}
-                        >
-                          🗑️
-                        </button>
+                      )}
+                      
+                      <p className="cart-item-price">${getItemTotal(item).toLocaleString()}</p>
+                    </div>
+                    <div className="cart-item-actions">
+                      <div className="quantity-control">
+                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                        <span>{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
                       </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+                      <button className="remove-btn" onClick={() => removeFromCart(item.id)}>🗑️</button>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
 
@@ -119,7 +118,7 @@ const CartSidebar = () => {
                 <div className="cart-summary">
                   <div className="summary-row">
                     <span>Subtotal:</span>
-                    <span>{cartTotal.toLocaleString()}</span>
+                    <span>${cartTotal.toLocaleString()}</span>
                   </div>
                   <div className="summary-row">
                     <span>Tax (10%):</span>
@@ -131,12 +130,8 @@ const CartSidebar = () => {
                   </div>
                 </div>
                 <div className="cart-actions">
-                  <button className="clear-cart" onClick={clearCart}>
-                    Clear Cart
-                  </button>
-                  <button className="checkout-btn">
-                    Proceed to Checkout →
-                  </button>
+                  <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
+                  <button className="checkout-btn">Proceed to Checkout →</button>
                 </div>
               </div>
             )}

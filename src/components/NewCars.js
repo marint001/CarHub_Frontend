@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 
-const NewCars = ({ cars, onViewDetails }) => {
+const NewCars = ({ cars, onViewDetails, onCustomize }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterBrand, setFilterBrand] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -36,6 +36,13 @@ const NewCars = ({ cars, onViewDetails }) => {
   const handleAddToCart = (e, car) => {
     e.stopPropagation();
     addToCart(car);
+  };
+
+  const handleCustomizeClick = (e, car) => {
+    e.stopPropagation();
+    if (onCustomize) {
+      onCustomize(car);
+    }
   };
 
   return (
@@ -220,10 +227,12 @@ const NewCars = ({ cars, onViewDetails }) => {
                 </div>
                 
                 <div className="card-buttons">
-                  <button className="view-details new-btn" onClick={(e) => {
-                    e.stopPropagation();
-                    onViewDetails(car);
-                  }}>View Details →</button>
+                  <button 
+                    className="customize-card-btn" 
+                    onClick={(e) => handleCustomizeClick(e, car)}
+                  >
+                    🎨 Customize
+                  </button>
                   <button className="add-cart-btn" onClick={(e) => handleAddToCart(e, car)}>
                     🛒 Add
                   </button>
@@ -266,10 +275,12 @@ const NewCars = ({ cars, onViewDetails }) => {
               <div className="list-price">
                 <div className="price">{car.price}</div>
                 <div className="list-buttons">
-                  <button className="view-btn" onClick={(e) => {
-                    e.stopPropagation();
-                    onViewDetails(car);
-                  }}>View</button>
+                  <button 
+                    className="customize-list-btn" 
+                    onClick={(e) => handleCustomizeClick(e, car)}
+                  >
+                    🎨
+                  </button>
                   <button className="cart-btn-small" onClick={(e) => handleAddToCart(e, car)}>🛒</button>
                 </div>
               </div>

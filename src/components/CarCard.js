@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 
-const CarCard = ({ car, onViewDetails }) => {
+const CarCard = ({ car, onViewDetails, onCustomize }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { addToCart } = useCart();
@@ -9,6 +9,13 @@ const CarCard = ({ car, onViewDetails }) => {
   const handleAddToCart = (e) => {
     e.stopPropagation();
     addToCart(car);
+  };
+
+  const handleCustomize = (e) => {
+    e.stopPropagation();
+    if (onCustomize) {
+      onCustomize(car);
+    }
   };
 
   return (
@@ -42,16 +49,21 @@ const CarCard = ({ car, onViewDetails }) => {
           {car.range && <div className="spec-item">🔋 {car.range}</div>}
         </div>
         
-        <p className="car-description">{car.description.substring(0, 80)}...</p>
+        <p className="car-description">{car.description?.substring(0, 80)}...</p>
         
         <div className="car-footer">
           <div className="car-price">
             <span className="price-amount">{car.price}</span>
             <span className="price-period">/ starting MSRP</span>
           </div>
-          <button className="add-to-cart-btn" onClick={handleAddToCart}>
-            🛒 Add to Cart
-          </button>
+          <div className="card-buttons">
+            <button className="customize-card-btn" onClick={handleCustomize}>
+              🎨 Customize
+            </button>
+            <button className="add-to-cart-btn" onClick={handleAddToCart}>
+              🛒 Add
+            </button>
+          </div>
         </div>
       </div>
     </div>

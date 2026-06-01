@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CarCatalog = ({ cars, onViewDetails }) => {
+const CarCatalog = ({ cars, onViewDetails, onCustomize }) => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
-  const [visibleCount, setVisibleCount] = useState(4); // Show 4 cars initially
+  const [visibleCount, setVisibleCount] = useState(4);
 
   const categories = ['all', ...new Set(cars.map(car => car.category))];
 
@@ -20,7 +20,6 @@ const CarCatalog = ({ cars, onViewDetails }) => {
   const featuredCars = filteredCars.filter(car => car.featured);
   const regularCars = filteredCars.filter(car => !car.featured);
   
-  // Show only first 'visibleCount' regular cars
   const displayedRegularCars = regularCars.slice(0, visibleCount);
   const hasMoreCars = visibleCount < regularCars.length;
 
@@ -154,7 +153,26 @@ const CarCatalog = ({ cars, onViewDetails }) => {
                       </div>
                       <div className="card-footer">
                         <div className="card-price">{car.price}</div>
-                        <button className="card-btn">View Details →</button>
+                        <div className="card-buttons">
+                          <button 
+                            className="customize-card-btn" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onCustomize) onCustomize(car);
+                            }}
+                          >
+                            🎨 Customize
+                          </button>
+                          <button 
+                            className="add-to-cart-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Add to cart logic
+                            }}
+                          >
+                            🛒 Add
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -183,7 +201,26 @@ const CarCatalog = ({ cars, onViewDetails }) => {
                     </div>
                     <div className="list-price">
                       <span>{car.price}</span>
-                      <button>View</button>
+                      <div className="list-buttons">
+                        <button 
+                          className="customize-list-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onCustomize) onCustomize(car);
+                          }}
+                        >
+                          🎨
+                        </button>
+                        <button 
+                          className="add-list-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Add to cart logic
+                          }}
+                        >
+                          🛒
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
@@ -205,9 +242,8 @@ const CarCatalog = ({ cars, onViewDetails }) => {
                   transition={{ delay: index * 0.05 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -8 }}
-                  onClick={() => onViewDetails(car)}
                 >
-                  <div className="card-image">
+                  <div className="card-image" onClick={() => onViewDetails(car)}>
                     <img src={car.image} alt={car.name} />
                     <div className="card-overlay">
                       <button className="quick-view">Quick View</button>
@@ -225,7 +261,26 @@ const CarCatalog = ({ cars, onViewDetails }) => {
                     </div>
                     <div className="card-footer">
                       <div className="card-price">{car.price}</div>
-                      <button className="card-btn">View Details →</button>
+                      <div className="card-buttons">
+                        <button 
+                          className="customize-card-btn" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onCustomize) onCustomize(car);
+                          }}
+                        >
+                          🎨 Customize
+                        </button>
+                        <button 
+                          className="add-to-cart-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Add to cart logic
+                          }}
+                        >
+                          🛒 Add
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -271,7 +326,26 @@ const CarCatalog = ({ cars, onViewDetails }) => {
                   </div>
                   <div className="list-price">
                     <span>{car.price}</span>
-                    <button>View</button>
+                    <div className="list-buttons">
+                      <button 
+                        className="customize-list-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onCustomize) onCustomize(car);
+                        }}
+                      >
+                        🎨
+                      </button>
+                      <button 
+                        className="add-list-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Add to cart logic
+                        }}
+                      >
+                        🛒
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
