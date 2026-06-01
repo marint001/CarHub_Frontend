@@ -15,7 +15,9 @@ import NewsletterSignup from './components/NewsletterSignup';
 import NewCars from './components/NewCars';
 import UsedCars from './components/UsedCars';
 import CarDetailPage from './components/CarDetailPage';
-import CustomizePage from './components/CustomizePage';
+import CheckoutPage from './components/CheckoutPage';
+import CarComparePage from './components/CarComparePage';
+import AccessoriesPage from './components/AccessoriesPage';
 import Features from './components/Features';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -32,8 +34,10 @@ function App() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [carSource, setCarSource] = useState(null);
 
+  // Pages where header should be hidden
+  const hideHeaderPages = ['compare', 'checkout'];
+
   const handleNavigate = (page, car = null, source = null) => {
-    console.log('Navigating to:', page, car?.name, source);
     if (car) {
       setSelectedCar(car);
       setCarSource(source);
@@ -46,22 +50,17 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // This function handles customize from ANY page (CarDetail, NewCars, UsedCars, CarCatalog)
-  const handleCustomize = (car) => {
-    console.log('handleCustomize called with car:', car?.name);
-    setSelectedCar(car);
-    setCurrentPage('customize');
+  const handleCheckout = () => {
+    setCurrentPage('checkout');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToHome = () => {
-    console.log('Going back to home page');
     setCurrentPage('home');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToPrevious = () => {
-    console.log('handleBackToPrevious called, carSource:', carSource);
     if (carSource === 'new') {
       setCurrentPage('newcars');
     } else if (carSource === 'used') {
@@ -72,24 +71,25 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleAddToCart = (customizedCar) => {
-    console.log('Customized car added to cart:', customizedCar);
-  };
-
   const renderPage = () => {
-    console.log('Current page:', currentPage);
     switch(currentPage) {
       case 'newcars':
         return <NewCars 
           cars={carsData.filter(c => c.year >= 2020)} 
           onViewDetails={(car) => handleNavigate('detail', car, 'new')}
-          onCustomize={handleCustomize}  // ← ADD THIS
         />;
       case 'usedcars':
         return <UsedCars 
           cars={carsData.filter(c => c.year < 2020)} 
           onViewDetails={(car) => handleNavigate('detail', car, 'used')}
-          onCustomize={handleCustomize}  // ← ADD THIS
+        />;
+      case 'accessories':
+        return <AccessoriesPage onBack={() => setCurrentPage('home')} />;
+      case 'compare':
+        return <CarComparePage 
+          cars={carsData} 
+          onBack={() => setCurrentPage('home')}
+          onViewDetails={(car) => handleNavigate('detail', car)}
         />;
       case 'features':
         return <Features />;
@@ -98,15 +98,10 @@ function App() {
       case 'detail':
         return <CarDetailPage 
           car={selectedCar} 
-          onBack={handleBackToPrevious} 
-          onCustomize={() => handleCustomize(selectedCar)} 
+          onBack={handleBackToPrevious}
         />;
-      case 'customize':
-        return <CustomizePage 
-          car={selectedCar} 
-          onBack={handleBackToHome}
-          onAddToCart={handleAddToCart} 
-        />;
+      case 'checkout':
+        return <CheckoutPage onBack={() => setCurrentPage('home')} />;
       case 'home':
       default:
         return (
@@ -116,7 +111,6 @@ function App() {
             <CarCatalog 
               cars={carsData} 
               onViewDetails={(car) => handleNavigate('detail', car, 'home')}
-              onCustomize={handleCustomize}  // ← ADD THIS
             />
             <WhyChooseUs />
             <Testimonials />
@@ -127,12 +121,16 @@ function App() {
     }
   };
 
+  const shouldHideHeader = hideHeaderPages.includes(currentPage);
+
   return (
     <AuthProvider>
       <CartProvider>
         <div className="App">
-          <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
-          <CartSidebar />
+          {!shouldHideHeader && (
+            <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
+          )}
+          <CartSidebar onCheckout={handleCheckout} />
           <AnimatePresence mode="wait">
             <motion.div key={currentPage} variants={pageVariants} initial="initial" animate="animate" exit="exit">
               {renderPage()}

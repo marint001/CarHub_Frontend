@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 
-const CartSidebar = () => {
+const CartSidebar = ({ onCheckout }) => {
   const { 
     cartItems, 
     cartCount, 
@@ -26,13 +26,21 @@ const CartSidebar = () => {
     }
   };
 
-  // Calculate item total price
-  const getItemTotal = (item) => {
+  const getItemPrice = (item) => {
     if (item.isCustomized && item.finalPrice) {
-      return item.finalPrice * item.quantity;
+      return item.finalPrice;
     }
-    const price = parseFloat(item.price?.replace(/[^0-9.-]+/g, '')) || 0;
-    return price * item.quantity;
+    if (typeof item.price === 'string') {
+      return parseFloat(item.price.replace(/[^0-9.-]+/g, '')) || 0;
+    }
+    return item.price || 0;
+  };
+
+  const handleCheckoutClick = () => {
+    toggleCart();
+    if (onCheckout) {
+      onCheckout();
+    }
   };
 
   return (
@@ -74,31 +82,22 @@ const CartSidebar = () => {
                       <h4>{item.name}</h4>
                       <p className="cart-item-brand">{item.brand}</p>
                       
-                      {/* Show customization details if item is customized */}
                       {item.isCustomized && item.customization && (
                         <div className="cart-item-customization">
                           <div className="custom-badge">✨ Customized</div>
-                          {item.customization.details && (
-                            <div className="custom-details">
-                              <div className="custom-detail">🎨 {item.customization.details.exterior}</div>
-                              <div className="custom-detail">🛋️ {item.customization.details.interior}</div>
-                              <div className="custom-detail">🛞 {item.customization.details.wheels}</div>
-                              {item.customization.details.package !== 'None' && (
-                                <div className="custom-detail">📦 {item.customization.details.package}</div>
-                              )}
-                              {item.customization.details.accessories !== 'None' && (
-                                <div className="custom-detail">🎒 {item.customization.details.accessories}</div>
-                              )}
-                            </div>
+                          {item.customization.exteriorColor && (
+                            <div className="custom-detail">🎨 {item.customization.exteriorColor.name}</div>
                           )}
-                          <div className="custom-price-breakdown">
-                            <span>Base: {item.basePrice}</span>
-                            <span>Customization: +${item.customization.totalCustomizationPrice?.toLocaleString()}</span>
-                          </div>
+                          {item.customization.wheel && item.customization.wheel.price > 0 && (
+                            <div className="custom-detail">🛞 {item.customization.wheel.name}</div>
+                          )}
+                          {item.customization.package && item.customization.package.price > 0 && (
+                            <div className="custom-detail">📦 {item.customization.package.name}</div>
+                          )}
                         </div>
                       )}
                       
-                      <p className="cart-item-price">${getItemTotal(item).toLocaleString()}</p>
+                      <p className="cart-item-price">${(getItemPrice(item) * item.quantity).toLocaleString()}</p>
                     </div>
                     <div className="cart-item-actions">
                       <div className="quantity-control">
@@ -131,7 +130,9 @@ const CartSidebar = () => {
                 </div>
                 <div className="cart-actions">
                   <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
-                  <button className="checkout-btn">Proceed to Checkout →</button>
+                  <button className="checkout-btn" onClick={handleCheckoutClick}>
+                    Proceed to Checkout →
+                  </button>
                 </div>
               </div>
             )}

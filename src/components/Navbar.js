@@ -38,7 +38,8 @@ const Navbar = ({ onNavigate, currentPage }) => {
     { name: 'Used Cars', page: 'usedcars'},
     { name: 'Features', page: 'features'},
     { name: 'Contact', page: 'contact'},
-    { name: 'Customize', page: 'customize'},
+    { name: 'Compare', page: 'compare'},
+    { name: 'Accessories', page: 'accessories'},
   ];
 
   return (

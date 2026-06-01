@@ -7,7 +7,6 @@ const CarDetailPage = ({ car, onBack }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showFinanceCalculator, setShowFinanceCalculator] = useState(false);
   const [showAddedToast, setShowAddedToast] = useState(false);
-  const [showCustomizer, setShowCustomizer] = useState(false);
   const [loanAmount, setLoanAmount] = useState(50000);
   const [downPayment, setDownPayment] = useState(10000);
   const [loanTerm, setLoanTerm] = useState(60);
@@ -21,11 +20,50 @@ const CarDetailPage = ({ car, onBack }) => {
   const [selectedTire, setSelectedTire] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [selectedAccessory, setSelectedAccessory] = useState([]);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+  // Define all options
+  const exteriorColors = [
+    { name: 'Pearl White', code: '#f5f5f5', price: 0 },
+    { name: 'Jet Black', code: '#1a1a1a', price: 0 },
+    { name: 'Racing Red', code: '#e63946', price: 1500 },
+    { name: 'Midnight Blue', code: '#1a2a4f', price: 1200 },
+    { name: 'Silver Metallic', code: '#c0c0c0', price: 800 },
+    { name: 'Forest Green', code: '#2d5a27', price: 1800 }
+  ];
+
+  const interiorColors = [
+    { name: 'Black Leather', code: '#2a2a2a', price: 0 },
+    { name: 'Red Leather', code: '#8b1a1a', price: 1200 },
+    { name: 'Tan Leather', code: '#d4a574', price: 1500 },
+    { name: 'White Leather', code: '#f0f0f0', price: 1800 }
+  ];
+
+  const wheelOptions = [
+    { name: '19" Standard Alloy', price: 0, style: 'Classic' },
+    { name: '20" Sport Alloy', price: 1200, style: 'Sport' },
+    { name: '21" Performance Alloy', price: 2500, style: 'Performance' }
+  ];
+
+  const tireOptions = [
+    { name: 'All-Season Tires', price: 0, performance: 'Balanced' },
+    { name: 'Summer Performance', price: 800, performance: 'Excellent' },
+    { name: 'Winter Tires', price: 1000, performance: 'Good' }
+  ];
+
+  const optionPackages = [
+    { name: 'Standard Package', price: 0, features: ['Basic Audio', 'Standard Seats'] },
+    { name: 'Premium Package', price: 3500, features: ['Premium Audio', 'Heated Seats', 'Sunroof'] },
+    { name: 'Luxury Package', price: 7500, features: ['Bose Sound', 'Massage Seats', 'Panoramic Roof'] }
+  ];
+
+  const accessories = [
+    { name: 'Roof Rack', price: 500, icon: '🎒' },
+    { name: 'Floor Mats', price: 150, icon: '🧩' },
+    { name: 'Dash Cam', price: 300, icon: '📹' }
+  ];
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Set default selections
     if (exteriorColors.length > 0) setSelectedExteriorColor(exteriorColors[0]);
     if (wheelOptions.length > 0) setSelectedWheel(wheelOptions[0]);
     if (tireOptions.length > 0) setSelectedTire(tireOptions[0]);
@@ -62,58 +100,6 @@ const CarDetailPage = ({ car, onBack }) => {
 
   const basePriceNumber = parseFloat(safeCar.price.replace(/[^0-9.-]+/g, ''));
 
-  // Exterior Colors
-  const exteriorColors = [
-    { name: 'Pearl White', code: '#f5f5f5', price: 0 },
-    { name: 'Jet Black', code: '#1a1a1a', price: 0 },
-    { name: 'Racing Red', code: '#e63946', price: 1500 },
-    { name: 'Midnight Blue', code: '#1a2a4f', price: 1200 },
-    { name: 'Silver Metallic', code: '#c0c0c0', price: 800 },
-    { name: 'Forest Green', code: '#2d5a27', price: 1800 },
-    { name: 'Sunset Orange', code: '#ff6b35', price: 2000 },
-    { name: 'Frozen Gray', code: '#8a8a8a', price: 2500 }
-  ];
-
-  // Interior Colors
-  const interiorColors = [
-    { name: 'Black Leather', code: '#2a2a2a', price: 0 },
-    { name: 'Red Leather', code: '#8b1a1a', price: 1200 },
-    { name: 'Tan Leather', code: '#d4a574', price: 1500 },
-    { name: 'White Leather', code: '#f0f0f0', price: 1800 }
-  ];
-
-  // Wheel Options
-  const wheelOptions = [
-    { name: '19" Standard Alloy', price: 0, style: 'Classic' },
-    { name: '20" Sport Alloy', price: 1200, style: 'Sport' },
-    { name: '21" Performance Alloy', price: 2500, style: 'Performance' },
-    { name: '22" Carbon Fiber', price: 4500, style: 'Ultra' }
-  ];
-
-  // Tire Options
-  const tireOptions = [
-    { name: 'All-Season Tires', price: 0, performance: 'Balanced' },
-    { name: 'Summer Performance', price: 800, performance: 'Excellent' },
-    { name: 'Winter Tires', price: 1000, performance: 'Good' },
-    { name: 'Ultra-High Performance', price: 1500, performance: 'Superior' }
-  ];
-
-  // Option Packages
-  const optionPackages = [
-    { name: 'Standard Package', price: 0, features: ['Basic Audio', 'Standard Seats'] },
-    { name: 'Premium Package', price: 3500, features: ['Premium Audio', 'Heated Seats', 'Sunroof'] },
-    { name: 'Luxury Package', price: 7500, features: ['Bose Sound', 'Massage Seats', 'Panoramic Roof'] },
-    { name: 'Performance Package', price: 5500, features: ['Sport Suspension', 'Performance Brakes'] }
-  ];
-
-  // Accessories
-  const accessories = [
-    { name: 'Roof Rack', price: 500, icon: '🎒' },
-    { name: 'Floor Mats', price: 150, icon: '🧩' },
-    { name: 'First Aid Kit', price: 60, icon: '🏥' },
-    { name: 'Dash Cam', price: 300, icon: '📹' }
-  ];
-
   const calculateTotalPrice = () => {
     let total = basePriceNumber;
     if (selectedExteriorColor) total += selectedExteriorColor.price;
@@ -138,7 +124,10 @@ const CarDetailPage = ({ car, onBack }) => {
   const handleAddToCart = () => {
     const customizedCar = {
       ...safeCar,
+      id: car.id + '_' + Date.now(),
       price: `$${totalPrice.toLocaleString()}`,
+      originalPrice: safeCar.price,
+      isCustomized: true,
       customization: {
         exteriorColor: selectedExteriorColor,
         interiorColor: selectedInteriorColor,
@@ -146,8 +135,17 @@ const CarDetailPage = ({ car, onBack }) => {
         tire: selectedTire,
         package: selectedPackage,
         accessories: selectedAccessory,
-        totalPrice: totalPrice
-      }
+        totalCustomizationPrice: totalPrice - basePriceNumber,
+        details: {
+          exterior: selectedExteriorColor.name,
+          interior: selectedInteriorColor.name,
+          wheels: selectedWheel.name,
+          tires: selectedTire.name,
+          package: selectedPackage?.name || 'None',
+          accessories: selectedAccessory.map(a => a.name).join(', ') || 'None'
+        }
+      },
+      finalPrice: totalPrice
     };
     addToCart(customizedCar);
     setShowAddedToast(true);
@@ -179,7 +177,7 @@ const CarDetailPage = ({ car, onBack }) => {
     }
   };
 
-  const features = {
+  const featuresList = {
     'Exterior': ['LED Matrix Headlights', 'Carbon Fiber Spoiler', '21" Alloy Wheels', 'Panoramic Glass Roof'],
     'Interior': ['Heated & Ventilated Seats', 'Premium Leather', 'Ambient Lighting', 'Massage Seats'],
     'Technology': ['17-inch Touchscreen', 'Apple CarPlay', 'Head-Up Display', 'Premium Sound'],
@@ -227,9 +225,6 @@ const CarDetailPage = ({ car, onBack }) => {
         <button className="back-btn" onClick={onBack}>
           ← Back to Vehicles
         </button>
-        <button className="customize-toggle-btn" onClick={() => setShowCustomizer(!showCustomizer)}>
-          {showCustomizer ? 'Hide Customizer' : '🎨 Customize'}
-        </button>
       </div>
 
       {/* Hero Section */}
@@ -238,6 +233,11 @@ const CarDetailPage = ({ car, onBack }) => {
           <div className="hero-badge">{safeCar.brand}</div>
           <h1>{safeCar.name}</h1>
           <div className="hero-price">${totalPrice.toLocaleString()}</div>
+          
+          {(selectedExteriorColor?.price > 0 || selectedWheel?.price > 0 || selectedPackage?.price > 0 || selectedAccessory.length > 0) && (
+            <div className="hero-custom-badge">✨ Custom Build</div>
+          )}
+          
           {safeCar.year < 2020 && (
             <div className="hero-badges">
               <span className="badge-certified">✓ Certified Pre-owned</span>
@@ -251,161 +251,156 @@ const CarDetailPage = ({ car, onBack }) => {
         </div>
       </div>
 
-      {/* Customizer Panel */}
-      <AnimatePresence>
-        {showCustomizer && (
-          <motion.div 
-            className="customizer-panel"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="customizer-container">
-              <h3>Customize Your {safeCar.name}</h3>
-              
-              {/* Exterior Color */}
-              <div className="customizer-section">
-                <h4>🎨 Exterior Color</h4>
-                <div className="color-options">
-                  {exteriorColors.map((color) => (
-                    <div
-                      key={color.name}
-                      className={`color-option ${selectedExteriorColor?.name === color.name ? 'selected' : ''}`}
-                      onClick={() => setSelectedExteriorColor(color)}
-                    >
-                      <div className="color-swatch" style={{ backgroundColor: color.code }}></div>
-                      <span className="color-name">{color.name}</span>
-                      <span className="color-price">{color.price === 0 ? 'Included' : `+$${color.price}`}</span>
-                    </div>
-                  ))}
+      {/* Customizer Panel - Always Visible */}
+      <div className="customizer-panel">
+        <div className="customizer-container">
+          <h3>🎨 Customize Your {safeCar.name}</h3>
+          <p className="customizer-subtitle">Select options to create your perfect car</p>
+          
+          {/* Exterior Color */}
+          <div className="customizer-section">
+            <h4>🎨 Exterior Color</h4>
+            <div className="color-options">
+              {exteriorColors.map((color) => (
+                <div
+                  key={color.name}
+                  className={`color-option ${selectedExteriorColor?.name === color.name ? 'selected' : ''}`}
+                  onClick={() => setSelectedExteriorColor(color)}
+                >
+                  <div className="color-swatch" style={{ backgroundColor: color.code }}></div>
+                  <span className="color-name">{color.name}</span>
+                  <span className="color-price">{color.price === 0 ? 'Included' : `+$${color.price.toLocaleString()}`}</span>
                 </div>
-              </div>
-
-              {/* Interior Color */}
-              <div className="customizer-section">
-                <h4>🛋️ Interior Color</h4>
-                <div className="color-options">
-                  {interiorColors.map((color) => (
-                    <div
-                      key={color.name}
-                      className={`color-option ${selectedInteriorColor?.name === color.name ? 'selected' : ''}`}
-                      onClick={() => setSelectedInteriorColor(color)}
-                    >
-                      <div className="color-swatch" style={{ backgroundColor: color.code }}></div>
-                      <span className="color-name">{color.name}</span>
-                      <span className="color-price">{color.price === 0 ? 'Included' : `+$${color.price}`}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Wheels */}
-              <div className="customizer-section">
-                <h4>🛞 Wheel Options</h4>
-                <div className="option-grid">
-                  {wheelOptions.map((wheel) => (
-                    <div
-                      key={wheel.name}
-                      className={`option-card ${selectedWheel?.name === wheel.name ? 'selected' : ''}`}
-                      onClick={() => setSelectedWheel(wheel)}
-                    >
-                      <span className="option-name">{wheel.name}</span>
-                      <span className="option-style">{wheel.style}</span>
-                      <span className="option-price">{wheel.price === 0 ? 'Included' : `+$${wheel.price}`}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Tires */}
-              <div className="customizer-section">
-                <h4> Tire Options</h4>
-                <div className="option-grid">
-                  {tireOptions.map((tire) => (
-                    <div
-                      key={tire.name}
-                      className={`option-card ${selectedTire?.name === tire.name ? 'selected' : ''}`}
-                      onClick={() => setSelectedTire(tire)}
-                    >
-                      <span className="option-name">{tire.name}</span>
-                      <span className="option-specs">{tire.performance}</span>
-                      <span className="option-price">{tire.price === 0 ? 'Included' : `+$${tire.price}`}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Packages */}
-              <div className="customizer-section">
-                <h4>📦 Option Packages</h4>
-                <div className="package-grid">
-                  {optionPackages.map((pkg) => (
-                    <div
-                      key={pkg.name}
-                      className={`package-card ${selectedPackage?.name === pkg.name ? 'selected' : ''}`}
-                      onClick={() => setSelectedPackage(pkg)}
-                    >
-                      <div className="package-header">
-                        <span className="package-name">{pkg.name}</span>
-                        <span className="package-price">{pkg.price === 0 ? 'Included' : `+$${pkg.price}`}</span>
-                      </div>
-                      <div className="package-features">
-                        {pkg.features.map((f, i) => <span key={i}>✓ {f}</span>)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Accessories */}
-              <div className="customizer-section">
-                <h4>🎒 Accessories</h4>
-                <div className="accessory-grid">
-                  {accessories.map((acc) => (
-                    <div
-                      key={acc.name}
-                      className={`accessory-card ${selectedAccessory.find(a => a.name === acc.name) ? 'selected' : ''}`}
-                      onClick={() => toggleAccessory(acc)}
-                    >
-                      <span className="accessory-icon">{acc.icon}</span>
-                      <span className="accessory-name">{acc.name}</span>
-                      <span className="accessory-price">+${acc.price}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price Summary */}
-              <div className="customizer-summary">
-                <div className="summary-row">
-                  <span>Base Price:</span>
-                  <span>${basePriceNumber.toLocaleString()}</span>
-                </div>
-                {selectedExteriorColor && selectedExteriorColor.price > 0 && (
-                  <div className="summary-row"><span>{selectedExteriorColor.name}:</span><span>+${selectedExteriorColor.price}</span></div>
-                )}
-                {selectedInteriorColor && selectedInteriorColor.price > 0 && (
-                  <div className="summary-row"><span>{selectedInteriorColor.name}:</span><span>+${selectedInteriorColor.price}</span></div>
-                )}
-                {selectedWheel && selectedWheel.price > 0 && (
-                  <div className="summary-row"><span>{selectedWheel.name}:</span><span>+${selectedWheel.price}</span></div>
-                )}
-                {selectedTire && selectedTire.price > 0 && (
-                  <div className="summary-row"><span>{selectedTire.name}:</span><span>+${selectedTire.price}</span></div>
-                )}
-                {selectedPackage && selectedPackage.price > 0 && (
-                  <div className="summary-row"><span>{selectedPackage.name}:</span><span>+${selectedPackage.price}</span></div>
-                )}
-                <div className="summary-total">
-                  <span>Total Price:</span>
-                  <span>${totalPrice.toLocaleString()}</span>
-                </div>
-              </div>
+              ))}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+
+          {/* Interior Color */}
+          <div className="customizer-section">
+            <h4>🛋️ Interior Color</h4>
+            <div className="color-options">
+              {interiorColors.map((color) => (
+                <div
+                  key={color.name}
+                  className={`color-option ${selectedInteriorColor?.name === color.name ? 'selected' : ''}`}
+                  onClick={() => setSelectedInteriorColor(color)}
+                >
+                  <div className="color-swatch" style={{ backgroundColor: color.code }}></div>
+                  <span className="color-name">{color.name}</span>
+                  <span className="color-price">{color.price === 0 ? 'Included' : `+$${color.price.toLocaleString()}`}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Wheel Options */}
+          <div className="customizer-section">
+            <h4>🛞 Wheel Options</h4>
+            <div className="option-grid">
+              {wheelOptions.map((wheel) => (
+                <div
+                  key={wheel.name}
+                  className={`option-card ${selectedWheel?.name === wheel.name ? 'selected' : ''}`}
+                  onClick={() => setSelectedWheel(wheel)}
+                >
+                  <span className="option-name">{wheel.name}</span>
+                  <span className="option-style">{wheel.style}</span>
+                  <span className="option-price">{wheel.price === 0 ? 'Included' : `+$${wheel.price.toLocaleString()}`}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tire Options */}
+          <div className="customizer-section">
+            <h4> Tire Options</h4>
+            <div className="option-grid">
+              {tireOptions.map((tire) => (
+                <div
+                  key={tire.name}
+                  className={`option-card ${selectedTire?.name === tire.name ? 'selected' : ''}`}
+                  onClick={() => setSelectedTire(tire)}
+                >
+                  <span className="option-name">{tire.name}</span>
+                  <span className="option-specs">{tire.performance}</span>
+                  <span className="option-price">{tire.price === 0 ? 'Included' : `+$${tire.price.toLocaleString()}`}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Option Packages */}
+          <div className="customizer-section">
+            <h4>📦 Option Packages</h4>
+            <div className="package-grid">
+              {optionPackages.map((pkg) => (
+                <div
+                  key={pkg.name}
+                  className={`package-card ${selectedPackage?.name === pkg.name ? 'selected' : ''}`}
+                  onClick={() => setSelectedPackage(pkg)}
+                >
+                  <div className="package-header">
+                    <span className="package-name">{pkg.name}</span>
+                    <span className="package-price">{pkg.price === 0 ? 'Included' : `+$${pkg.price.toLocaleString()}`}</span>
+                  </div>
+                  <div className="package-features">
+                    {pkg.features.map((f, i) => <span key={i}>✓ {f}</span>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Accessories */}
+          <div className="customizer-section">
+            <h4>🎒 Accessories</h4>
+            <div className="accessory-grid">
+              {accessories.map((acc) => (
+                <div
+                  key={acc.name}
+                  className={`accessory-card ${selectedAccessory.find(a => a.name === acc.name) ? 'selected' : ''}`}
+                  onClick={() => toggleAccessory(acc)}
+                >
+                  <span className="accessory-icon">{acc.icon}</span>
+                  <span className="accessory-name">{acc.name}</span>
+                  <span className="accessory-price">+${acc.price.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Summary */}
+          <div className="customizer-summary">
+            <div className="summary-title">💰 Price Breakdown</div>
+            <div className="summary-row">
+              <span>Base Price:</span>
+              <span>${basePriceNumber.toLocaleString()}</span>
+            </div>
+            {selectedExteriorColor && selectedExteriorColor.price > 0 && (
+              <div className="summary-row"><span>{selectedExteriorColor.name}:</span><span>+${selectedExteriorColor.price.toLocaleString()}</span></div>
+            )}
+            {selectedInteriorColor && selectedInteriorColor.price > 0 && (
+              <div className="summary-row"><span>{selectedInteriorColor.name}:</span><span>+${selectedInteriorColor.price.toLocaleString()}</span></div>
+            )}
+            {selectedWheel && selectedWheel.price > 0 && (
+              <div className="summary-row"><span>{selectedWheel.name}:</span><span>+${selectedWheel.price.toLocaleString()}</span></div>
+            )}
+            {selectedTire && selectedTire.price > 0 && (
+              <div className="summary-row"><span>{selectedTire.name}:</span><span>+${selectedTire.price.toLocaleString()}</span></div>
+            )}
+            {selectedPackage && selectedPackage.price > 0 && (
+              <div className="summary-row"><span>{selectedPackage.name}:</span><span>+${selectedPackage.price.toLocaleString()}</span></div>
+            )}
+            {selectedAccessory.length > 0 && (
+              <div className="summary-row"><span>Accessories ({selectedAccessory.length}):</span><span>+${selectedAccessory.reduce((sum, a) => sum + a.price, 0).toLocaleString()}</span></div>
+            )}
+            <div className="summary-total">
+              <span>Total Price:</span>
+              <span>${totalPrice.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="detail-main">
@@ -432,54 +427,33 @@ const CarDetailPage = ({ car, onBack }) => {
 
         {/* Info Panel */}
         <div className="detail-info">
-          {/* Quick Specs */}
           <div className="quick-specs">
             <div className="quick-spec">
               <span className="spec-icon">⚡</span>
-              <div>
-                <div className="spec-value">{safeCar.horsepower}</div>
-                <div className="spec-label">Horsepower</div>
-              </div>
+              <div><div className="spec-value">{safeCar.horsepower}</div><div className="spec-label">Horsepower</div></div>
             </div>
             <div className="spec-divider"></div>
             <div className="quick-spec">
               <span className="spec-icon">🏎️</span>
-              <div>
-                <div className="spec-value">{safeCar.acceleration}</div>
-                <div className="spec-label">0-60 mph</div>
-              </div>
+              <div><div className="spec-value">{safeCar.acceleration}</div><div className="spec-label">0-60 mph</div></div>
             </div>
             <div className="spec-divider"></div>
             <div className="quick-spec">
               <span className="spec-icon">💨</span>
-              <div>
-                <div className="spec-value">{safeCar.topSpeed}</div>
-                <div className="spec-label">Top Speed</div>
-              </div>
+              <div><div className="spec-value">{safeCar.topSpeed}</div><div className="spec-label">Top Speed</div></div>
             </div>
           </div>
 
-          {/* Pre-owned Info Card */}
-          {safeCar.year < 2020 && (
-            <div className="preowned-info-card">
-              <h4>Vehicle History Report</h4>
-              <div className="info-grid">
-                <div className="info-item"><span>Manufactured</span><span>{safeCar.year}</span></div>
-                {safeCar.mileage && <div className="info-item"><span>Mileage</span><span>{safeCar.mileage}</span></div>}
-                {safeCar.owners && <div className="info-item"><span>Previous Owners</span><span>{safeCar.owners}</span></div>}
-                <div className="info-item"><span>Condition</span><span className="condition-value">{safeCar.condition}</span></div>
-                <div className="info-item"><span>Car Age</span><span>{getCarAge()}</span></div>
-              </div>
-            </div>
-          )}
-
           {/* Selected Options Summary */}
-          {(selectedExteriorColor || selectedWheel || selectedPackage) && (
+          {(selectedExteriorColor?.price > 0 || selectedWheel?.price > 0 || selectedPackage?.price > 0 || selectedAccessory.length > 0) && (
             <div className="selected-summary">
-              <h4>Your Configuration</h4>
-              {selectedExteriorColor && <span>{selectedExteriorColor.name} Exterior</span>}
-              {selectedWheel && <span>{selectedWheel.name}</span>}
-              {selectedPackage && <span>{selectedPackage.name}</span>}
+              <h4>✨ Your Customizations</h4>
+              {selectedExteriorColor?.price > 0 && <span>🎨 {selectedExteriorColor.name}</span>}
+              {selectedInteriorColor?.price > 0 && <span>🛋️ {selectedInteriorColor.name}</span>}
+              {selectedWheel?.price > 0 && <span>🛞 {selectedWheel.name}</span>}
+              {selectedTire?.price > 0 && <span> {selectedTire.name}</span>}
+              {selectedPackage?.price > 0 && <span>📦 {selectedPackage.name}</span>}
+              {selectedAccessory.length > 0 && <span>🎒 +{selectedAccessory.length} Accessories</span>}
             </div>
           )}
 
@@ -504,6 +478,7 @@ const CarDetailPage = ({ car, onBack }) => {
           <div className="tab-content">
             {activeTab === 'overview' && (
               <div className="overview-content">
+                <h3>About this Vehicle</h3>
                 <p>{safeCar.description}</p>
                 <div className="highlights">
                   <div className="highlight"><span>🏆</span><div><h4>Award Winning</h4><p>Recognized for excellence</p></div></div>
@@ -528,7 +503,7 @@ const CarDetailPage = ({ car, onBack }) => {
 
             {activeTab === 'features' && (
               <div className="features-content">
-                {Object.entries(features).map(([category, items]) => (
+                {Object.entries(featuresList).map(([category, items]) => (
                   <div className="feature-category" key={category}><h3>{category}</h3><ul>{items.map((item, i) => <li key={i}>✓ {item}</li>)}</ul></div>
                 ))}
               </div>
@@ -547,7 +522,7 @@ const CarDetailPage = ({ car, onBack }) => {
               <div className="calculator-inputs">
                 <div className="input-group"><label>Vehicle Price</label><input type="range" min="10000" max="300000" step="1000" value={loanAmount} onChange={(e) => setLoanAmount(Number(e.target.value))} /><span>${loanAmount.toLocaleString()}</span></div>
                 <div className="input-group"><label>Down Payment</label><input type="range" min="0" max={loanAmount * 0.5} step="1000" value={downPayment} onChange={(e) => setDownPayment(Number(e.target.value))} /><span>${downPayment.toLocaleString()}</span></div>
-                <div className="input-group"><label>Loan Term</label><select value={loanTerm} onChange={(e) => setLoanTerm(Number(e.target.value))}><option value={36}>36 months</option><option value={48}>48 months</option><option value={60}>60 months</option><option value={72}>72 months</option></select></div>
+                <div className="input-group"><label>Loan Term</label><select value={loanTerm} onChange={(e) => setLoanTerm(Number(e.target.value))}><option value={36}>36 months</option><option value={48}>48 months</option><option value={60}>60 months</option></select></div>
                 <div className="input-group"><label>Interest Rate</label><input type="range" min="0" max="15" step="0.1" value={interestRate} onChange={(e) => setInterestRate(Number(e.target.value))} /><span>{interestRate}%</span></div>
               </div>
               <div className="calculator-result">
@@ -563,5 +538,5 @@ const CarDetailPage = ({ car, onBack }) => {
     </div>
   );
 };
-//Hello wold
+
 export default CarDetailPage;
