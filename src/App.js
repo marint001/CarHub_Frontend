@@ -34,9 +34,6 @@ function App() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [carSource, setCarSource] = useState(null);
 
-  // Pages where header should be hidden
-  const hideHeaderPages = ['compare', 'checkout'];
-
   const handleNavigate = (page, car = null, source = null) => {
     if (car) {
       setSelectedCar(car);
@@ -55,19 +52,9 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleBackToHome = () => {
-    setCurrentPage('home');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleBackToPrevious = () => {
-    if (carSource === 'new') {
-      setCurrentPage('newcars');
-    } else if (carSource === 'used') {
-      setCurrentPage('usedcars');
-    } else {
-      setCurrentPage('home');
-    }
+  const handleViewDetails = (car) => {
+    setSelectedCar(car);
+    setCurrentPage('detail');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -76,20 +63,19 @@ function App() {
       case 'newcars':
         return <NewCars 
           cars={carsData.filter(c => c.year >= 2020)} 
-          onViewDetails={(car) => handleNavigate('detail', car, 'new')}
+          onViewDetails={handleViewDetails}
         />;
       case 'usedcars':
         return <UsedCars 
           cars={carsData.filter(c => c.year < 2020)} 
-          onViewDetails={(car) => handleNavigate('detail', car, 'used')}
+          onViewDetails={handleViewDetails}
         />;
       case 'accessories':
-        return <AccessoriesPage onBack={() => setCurrentPage('home')} />;
+        return <AccessoriesPage />;
       case 'compare':
         return <CarComparePage 
           cars={carsData} 
-          onBack={() => setCurrentPage('home')}
-          onViewDetails={(car) => handleNavigate('detail', car)}
+          onViewDetails={handleViewDetails}
         />;
       case 'features':
         return <Features />;
@@ -98,7 +84,7 @@ function App() {
       case 'detail':
         return <CarDetailPage 
           car={selectedCar} 
-          onBack={handleBackToPrevious}
+          onBack={() => setCurrentPage(carSource === 'new' ? 'newcars' : carSource === 'used' ? 'usedcars' : 'home')}
         />;
       case 'checkout':
         return <CheckoutPage onBack={() => setCurrentPage('home')} />;
@@ -110,7 +96,7 @@ function App() {
             <SpecialOffers />
             <CarCatalog 
               cars={carsData} 
-              onViewDetails={(car) => handleNavigate('detail', car, 'home')}
+              onViewDetails={handleViewDetails}
             />
             <WhyChooseUs />
             <Testimonials />
@@ -121,15 +107,11 @@ function App() {
     }
   };
 
-  const shouldHideHeader = hideHeaderPages.includes(currentPage);
-
   return (
     <AuthProvider>
       <CartProvider>
         <div className="App">
-          {!shouldHideHeader && (
-            <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
-          )}
+          <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
           <CartSidebar onCheckout={handleCheckout} />
           <AnimatePresence mode="wait">
             <motion.div key={currentPage} variants={pageVariants} initial="initial" animate="animate" exit="exit">

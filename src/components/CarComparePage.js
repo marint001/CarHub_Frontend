@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CarComparePage = ({ cars, onBack, onViewDetails }) => {
+const CarComparePage = ({ cars, onViewDetails }) => {
   const [selectedCars, setSelectedCars] = useState([]);
   const [showCarSelector, setShowCarSelector] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterBrand, setFilterBrand] = useState('all');
-  const [expandedSpec, setExpandedSpec] = useState(null);
 
   const brands = ['all', ...new Set(cars.map(car => car.brand))];
 
@@ -33,6 +32,12 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
     setSelectedCars([]);
   };
 
+  const handleViewDetails = (car) => {
+    if (onViewDetails) {
+      onViewDetails(car);
+    }
+  };
+
   const getBestInCategory = (spec, carsList) => {
     if (carsList.length === 0) return null;
     if (spec === 'price') {
@@ -54,14 +59,6 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
     return null;
   };
 
-  const getComparisonValue = (car, spec) => {
-    if (spec === 'price') return parseFloat(car.price.replace(/[^0-9.-]+/g, ''));
-    if (spec === 'horsepower') return parseInt(car.horsepower);
-    if (spec === 'acceleration') return parseFloat(car.acceleration);
-    if (spec === 'topSpeed') return parseInt(car.topSpeed);
-    return null;
-  };
-
   const comparisonSpecs = [
     { key: 'price', label: 'Price', icon: '💰', unit: '', format: 'currency' },
     { key: 'horsepower', label: 'Horsepower', icon: '⚡', unit: 'hp', format: 'number', higherIsBetter: true },
@@ -74,13 +71,10 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
   ];
 
   return (
-    <div className="compare-page">
+    <div className="compare-page" style={{ marginTop: '80px' }}>
       <div className="compare-container">
-        {/* Hero Header */}
-        <div className="compare-hero">
-          <button className="back-btn" onClick={onBack}>
-            ← Back
-          </button>
+        {/* Header without back button */}
+        <div className="compare-header">
           <div className="hero-content">
             <h1>Compare <span>Vehicles</span></h1>
             <p>Make an informed decision with our side-by-side comparison tool</p>
@@ -132,6 +126,7 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
           </div>
         </div>
 
+        {/* Rest of the component remains the same */}
         {/* Car Selector Modal */}
         <AnimatePresence>
           {showCarSelector && (
@@ -223,7 +218,7 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
           </div>
         ) : (
           <>
-            {/* Vehicle Cards with Specifications Under Each */}
+            {/* Vehicle Cards */}
             <div className="compare-grid">
               {selectedCars.map((car, index) => (
                 <motion.div 
@@ -233,7 +228,6 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  {/* Car Header Card */}
                   <div className="compare-car-card">
                     <button className="remove-car" onClick={() => removeCar(car.id)}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -250,7 +244,7 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
                     <div className="car-price">{car.price}</div>
                     <button 
                       className="view-details-btn"
-                      onClick={() => onViewDetails(car)}
+                      onClick={() => handleViewDetails(car)}
                     >
                       View Details
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -260,7 +254,6 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
                     </button>
                   </div>
 
-                  {/* Specifications Card - Under each car */}
                   <div className="specs-card">
                     <div className="specs-card-header">
                       <h4>Technical Specifications</h4>
@@ -287,7 +280,6 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
                 </motion.div>
               ))}
               
-              {/* Add More Slot */}
               {selectedCars.length < 4 && (
                 <motion.div 
                   className="add-more-wrapper"
@@ -308,7 +300,7 @@ const CarComparePage = ({ cars, onBack, onViewDetails }) => {
               )}
             </div>
 
-            {/* Winner Analysis Section */}
+            {/* Winner Analysis */}
             {selectedCars.length >= 2 && (
               <div className="winner-analysis">
                 <div className="winner-header">

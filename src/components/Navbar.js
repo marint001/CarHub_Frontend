@@ -1,79 +1,80 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import UserMenu from './UserMenu';
 import AuthModal from './AuthModal';
 
-const Navbar = ({ onNavigate, currentPage }) => {
+const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const { cartCount, toggleCart } = useCart();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, );
 
   const toggleMenu = () => setIsOpen(!isOpen);
   
-  const handleNavigation = async (page) => {
-    setShowLoader(true);
-    setTimeout(() => {
-      if (onNavigate) {
-        onNavigate(page);
-      }
-      setIsOpen(false);
-      setTimeout(() => setShowLoader(false), 500);
-    }, 300);
-  };
-
   const navLinks = [
-    { name: 'Home', page: 'home'},
-    { name: 'New Cars', page: 'newcars'},
-    { name: 'Used Cars', page: 'usedcars'},
-    { name: 'Features', page: 'features'},
-    { name: 'Contact', page: 'contact'},
-    { name: 'Compare', page: 'compare'},
-    { name: 'Accessories', page: 'accessories'},
+    { name: 'Home', path: '/CarHUB'},
+    { name: 'New Cars', path: '/new-cars'},
+    { name: 'Used Cars', path: '/used-cars'},
+    { name: 'Accessories', path: '/accessories' },
+    { name: 'Compare', path: '/compare'},
+    { name: 'Features', path: '/features' },
+    { name: 'Contact', path: '/contact'}
   ];
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>
+      <AnimatePresence>
+        {showLoader && (
+          <motion.div className="navbar-loader-overlay">
+            <div className="loader-container">
+              <div className="loader-ring"></div>
+              <div className="loader-ring"></div>
+              <div className="loader-ring"></div>
+              <span className="loader-text">Loading...</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="nav-container">
-          <div className="logo" onClick={() => handleNavigation('home')}>
-            <span className="logo-icon">🚗</span>
+          <Link to="/CarHUB" className="logo">
             <span className="logo-text">
               <span className="logo-car">CAR</span>
               <span className="logo-hub">HUB</span>
             </span>
-          </div>
+          </Link>
           
           <div className={`nav-links ${isOpen ? 'active' : ''}`}>
             {navLinks.map((link) => (
-              <a
-                key={link.page}
-                href="#"
-                onClick={() => handleNavigation(link.page)}
-                className={`nav-link ${currentPage === link.page ? 'active' : ''}`}
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`nav-link ${isActive(link.path) ? 'active' : ''}`}
+                onClick={() => setIsOpen(false)}
               >
                 <span className="nav-icon">{link.icon}</span>
                 <span>{link.name}</span>
-              </a>
+              </Link>
             ))}
             
-            {/* Cart Button */}
             <button className="cart-btn" onClick={toggleCart}>
               🛒
-              {cartCount > 0 && (
-                <span className="cart-badge">{cartCount}</span>
-              )}
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </button>
             
             <UserMenu onOpenAuth={() => setShowAuthModal(true)} />
