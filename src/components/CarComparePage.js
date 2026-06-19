@@ -1,11 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CarComparePage = ({ cars, onViewDetails }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [selectedCars, setSelectedCars] = useState([]);
   const [showCarSelector, setShowCarSelector] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterBrand, setFilterBrand] = useState('all');
+
+  // Load selected cars from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const carIds = params.get('ids');
+    if (carIds) {
+      const ids = carIds.split(',').map(id => parseInt(id));
+      const savedCars = cars.filter(car => ids.includes(car.id));
+      setSelectedCars(savedCars);
+    }
+  }, [location.search, cars]);
+
+  // Save selected cars to URL whenever they change
+  const updateUrlWithSelectedCars = (newSelectedCars) => {
+    if (newSelectedCars.length > 0) {
+      const ids = newSelectedCars.map(car => car.id).join(',');
+      navigate(`/compare?ids=${ids}`, { replace: true });
+    } else {
+      navigate('/compare', { replace: true });
+    }
+  };
 
   const brands = ['all', ...new Set(cars.map(car => car.brand))];
 
@@ -18,18 +42,23 @@ const CarComparePage = ({ cars, onViewDetails }) => {
 
   const addCarToCompare = (car) => {
     if (selectedCars.length < 4) {
-      setSelectedCars([...selectedCars, car]);
+      const newSelectedCars = [...selectedCars, car];
+      setSelectedCars(newSelectedCars);
+      updateUrlWithSelectedCars(newSelectedCars);
       setShowCarSelector(false);
       setSearchTerm('');
     }
   };
 
   const removeCar = (carId) => {
-    setSelectedCars(selectedCars.filter(car => car.id !== carId));
+    const newSelectedCars = selectedCars.filter(car => car.id !== carId);
+    setSelectedCars(newSelectedCars);
+    updateUrlWithSelectedCars(newSelectedCars);
   };
 
   const clearAll = () => {
     setSelectedCars([]);
+    updateUrlWithSelectedCars([]);
   };
 
   const handleViewDetails = (car) => {
@@ -66,14 +95,13 @@ const CarComparePage = ({ cars, onViewDetails }) => {
     { key: 'topSpeed', label: 'Top Speed', icon: '💨', unit: 'mph', format: 'number', higherIsBetter: true },
     { key: 'engine', label: 'Engine', icon: '🔧', unit: '', format: 'text' },
     { key: 'year', label: 'Year', icon: '📅', unit: '', format: 'number' },
-    { key: 'range', label: 'Range', icon: '🔋', unit: 'miles', format: 'number' },
-    { key: 'torque', label: 'Torque', icon: '⚙️', unit: 'lb-ft', format: 'number' }
+    { key: 'range', label: 'Range', icon: '🔋', unit: 'miles', format: 'number' }
   ];
 
   return (
-    <div className="compare-page" style={{ marginTop: '80px' }}>
+    <div className="compare-page">
       <div className="compare-container">
-        {/* Header without back button */}
+        {/* Header */}
         <div className="compare-header">
           <div className="hero-content">
             <h1>Compare <span>Vehicles</span></h1>
@@ -121,12 +149,11 @@ const CarComparePage = ({ cars, onViewDetails }) => {
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M12 16v-4M12 8h.01"/>
               </svg>
-              Compare up to 4 vehicles
+              Compare up to 4 vehicles (URL saves your selection)
             </div>
           </div>
         </div>
 
-        {/* Rest of the component remains the same */}
         {/* Car Selector Modal */}
         <AnimatePresence>
           {showCarSelector && (
@@ -174,11 +201,6 @@ const CarComparePage = ({ cars, onViewDetails }) => {
                 <div className="selector-list">
                   {availableCars.length === 0 ? (
                     <div className="no-cars-message">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <circle cx="12" cy="16" r="0.5" fill="currentColor"/>
-                      </svg>
                       <p>No vehicles available to add</p>
                     </div>
                   ) : (
@@ -203,38 +225,19 @@ const CarComparePage = ({ cars, onViewDetails }) => {
         {/* Comparison Content */}
         {selectedCars.length === 0 ? (
           <div className="empty-compare">
-            <div className="empty-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
-            </div>
+            <div className="empty-icon">📊</div>
             <h2>No vehicles selected</h2>
-            <p>Start comparing by adding your first vehicle</p>
-            <button className="empty-add-btn" onClick={() => setShowCarSelector(true)}>
-              + Add Your First Vehicle
-            </button>
+            <p>Click "Add Vehicle" to start comparing cars side by side</p>
+            <p className="persist-note">💡 Your selection will be saved in the URL - you can bookmark and share it!</p>
           </div>
         ) : (
           <>
             {/* Vehicle Cards */}
             <div className="compare-grid">
               {selectedCars.map((car, index) => (
-                <motion.div 
-                  key={car.id} 
-                  className="compare-card-wrapper"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
+                <div key={car.id} className="compare-card-wrapper">
                   <div className="compare-car-card">
-                    <button className="remove-car" onClick={() => removeCar(car.id)}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
-                    </button>
+                    <button className="remove-car" onClick={() => removeCar(car.id)}>×</button>
                     <div className="car-rank">{index + 1}</div>
                     <div className="car-image-wrapper">
                       <img src={car.image} alt={car.name} />
@@ -246,14 +249,11 @@ const CarComparePage = ({ cars, onViewDetails }) => {
                       className="view-details-btn"
                       onClick={() => handleViewDetails(car)}
                     >
-                      View Details
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
-                      </svg>
+                      View Details →
                     </button>
                   </div>
 
+                  {/* Specifications Card */}
                   <div className="specs-card">
                     <div className="specs-card-header">
                       <h4>Technical Specifications</h4>
@@ -277,15 +277,12 @@ const CarComparePage = ({ cars, onViewDetails }) => {
                       })}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
               
+              {/* Add More Slot */}
               {selectedCars.length < 4 && (
-                <motion.div 
-                  className="add-more-wrapper"
-                  onClick={() => setShowCarSelector(true)}
-                  whileHover={{ scale: 1.02 }}
-                >
+                <div className="add-more-wrapper" onClick={() => setShowCarSelector(true)}>
                   <div className="add-more-card">
                     <div className="add-more-content">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -296,7 +293,7 @@ const CarComparePage = ({ cars, onViewDetails }) => {
                       <small>{4 - selectedCars.length} slots available</small>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
             </div>
 

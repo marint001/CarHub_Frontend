@@ -15,6 +15,9 @@ import AccessoriesPage from './components/AccessoriesPage';
 import Features from './components/Features';
 import Contact from './components/Contact';
 import { carsData } from './data/carsData';
+import SettingsPage from './components/SettingsPage';
+import MyPurchasesPage from './components/MyPurchasesPage';
+import MyVehiclesPage from './components/MyVehiclesPage';
 
 // Wrapper components to pass navigation
 const NewCarsWrapper = () => {
@@ -63,6 +66,11 @@ function AppRouter() {
               <Route path="/accessories" element={<AccessoriesPage />} />
               <Route path="/features" element={<Features />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/checkout/:step?" element={<CheckoutPage />} />
+              <Route path="/checkout/success" element={<CheckoutPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/purchases" element={<MyPurchasesPage />} />
+              <Route path="/my-vehicles" element={<MyVehiclesPage />} />
             </Routes>
             <Footer />
           </div>

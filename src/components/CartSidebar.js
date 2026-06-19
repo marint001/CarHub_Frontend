@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 
-const CartSidebar = ({ onCheckout }) => {
+const CartSidebar = () => {
+  const navigate = useNavigate();
   const { 
     cartItems, 
     cartCount, 
@@ -36,11 +38,9 @@ const CartSidebar = ({ onCheckout }) => {
     return item.price || 0;
   };
 
-  const handleCheckoutClick = () => {
+  const handleCheckout = () => {
     toggleCart();
-    if (onCheckout) {
-      onCheckout();
-    }
+    navigate('/checkout/shipping');
   };
 
   return (
@@ -77,7 +77,11 @@ const CartSidebar = ({ onCheckout }) => {
               ) : (
                 cartItems.map((item) => (
                   <div key={item.id} className="cart-item">
-                    <img src={item.image} alt={item.name} />
+                    {item.icon ? (
+                      <div className="cart-item-icon">{item.icon}</div>
+                    ) : (
+                      <img src={item.image} alt={item.name} />
+                    )}
                     <div className="cart-item-details">
                       <h4>{item.name}</h4>
                       <p className="cart-item-brand">{item.brand}</p>
@@ -90,9 +94,6 @@ const CartSidebar = ({ onCheckout }) => {
                           )}
                           {item.customization.wheel && item.customization.wheel.price > 0 && (
                             <div className="custom-detail">🛞 {item.customization.wheel.name}</div>
-                          )}
-                          {item.customization.package && item.customization.package.price > 0 && (
-                            <div className="custom-detail">📦 {item.customization.package.name}</div>
                           )}
                         </div>
                       )}
@@ -130,7 +131,7 @@ const CartSidebar = ({ onCheckout }) => {
                 </div>
                 <div className="cart-actions">
                   <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
-                  <button className="checkout-btn" onClick={handleCheckoutClick}>
+                  <button className="checkout-btn" onClick={handleCheckout}>
                     Proceed to Checkout →
                   </button>
                 </div>
